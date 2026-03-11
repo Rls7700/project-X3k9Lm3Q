@@ -92,7 +92,7 @@ def change_contact(args):
         print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
         return;
     if record.edit_phone(old_phone, new_phone):
-        print(f"Changed contact {Fore.GREEN}{name}{Fore.RESET} to phone: {Fore.GREEN}{phone}{Fore.RESET}")
+        print(f"Changed contact {Fore.GREEN}{name}{Fore.RESET} to phone: {Fore.GREEN}{phone}{Fore.RESET}") # type: ignore
 
 
 @input_error
@@ -147,3 +147,33 @@ def birthdays():
     list = book.get_upcoming_birthdays()
     for r in list:
         print(f"Contact {Fore.GREEN}{r['name']}{Fore.RESET} with birthday {r['birthday']} will selebrate {Fore.GREEN}{r['congratulation_date']}{Fore.RESET}")
+
+
+@input_error
+def add_email(args):
+    name = " ".join(args[:len(args)-1])
+    email = args[len(args)-1]
+    record = book.find(name)
+    if not record:
+        print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
+        return
+    
+    try:
+        record.add_email(email)
+        print(f"Added email {Fore.GREEN}{email}{Fore.RESET} for contact {Fore.GREEN}{name}{Fore.RESET}")
+    except Exception as e:
+        print(f"{Fore.RED}Error: {e}{Fore.RESET}")
+
+
+@input_error
+def show_email(args):
+    name = " ".join(args)
+    record = book.find(name)
+    if not record:
+        print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
+        return
+    
+    if record.email:
+        print(f"Contact {Fore.GREEN}{record.name.value}{Fore.RESET} email: {Fore.GREEN}{record.email.value}{Fore.RESET}")
+    else:
+        print(f"Contact {Fore.YELLOW}{record.name.value}{Fore.RESET} doesn't have an email.")
