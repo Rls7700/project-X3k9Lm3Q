@@ -1,7 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import re
-
+from .common import Field
 
 DEFAULT_GREETING_PERIOD_DAYS = 7
 DEFAULT_DATE_FORMAT = "%d.%m.%Y"
@@ -13,14 +13,6 @@ class PhoneException(Exception):
 
 class RecordException(Exception):
     pass
-
-
-class Field:
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return str(self.value)
 
 
 class Name(Field):
