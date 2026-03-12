@@ -15,6 +15,19 @@ class RecordException(Exception):
     pass
 
 
+class EmailException(Exception):
+    pass
+
+
+class Email(Field):
+    def __init__(self, value: str):
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value):
+            raise EmailException(f"Invalid email format: {value}")
+        super().__init__(value)
+
+    def __str__(self):
+        return f"email: {self.value}"
+
 class Name(Field):
     def __init__(self, value):
         self.value = value
@@ -42,7 +55,7 @@ class Birthday(Field):
     def __str__(self):
         if self.value:
             return f"birthday: {self.value.strftime(DEFAULT_DATE_FORMAT)}"
-        return "";
+        return ""
         
 
 
@@ -51,11 +64,23 @@ class Record:
         self.name = Name(name)
         self.phones = []
         self.birthday = None
+        self.email = None
 
     def __str__(self):
-        if not self.birthday:
-            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-        return f"Contact name: {self.name.value}, {self.birthday}, phones: {'; '.join(p.value for p in self.phones)}"
+        res = f"Contact name: {self.name.value}"
+        
+        birthday = getattr(self, 'birthday', None)
+        
+        if birthday:
+            res += f", {birthday}"
+            
+        email = getattr(self, 'email', None)
+        
+        if email:
+            res += f", {email}"
+            
+        res += f", phones: {'; '.join(p.value for p in self.phones)}"
+        return res
 
     def add_phone(self, phone: str):
         if not any(p.value == phone for p in self.phones):
@@ -81,6 +106,9 @@ class Record:
         if not self.birthday or not self.birthday.value:
             return None
         return self.birthday.value.strftime(DEFAULT_DATE_FORMAT)
+    
+    def add_email(self, email: str):
+        self.email = Email(email)
 
 
 class AddressBook(UserDict):

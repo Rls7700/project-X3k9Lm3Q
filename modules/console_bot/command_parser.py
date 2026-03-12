@@ -12,6 +12,8 @@ AVAILABLE_COMMANDS = {
     "all": "Show all contacts",
     "add-birthday": "[name] [birthday] - Add for a specific contact",
     "show-birthday": "[name] - Show birthday for contact",
+    "add-email": "[name] [email] - Add email for a specific contact",
+    "show-email": "[name] - Show email for contact",
     "birthdays": "Show upcoming birthdays for a week",
 
     "note_add": "[text] - Add a new note", 
@@ -69,6 +71,10 @@ def command_parser(input_command: str) -> None:
         handlers.add_birthday(args)
     elif command == "show-birthday":
         handlers.show_birthday(args)
+    elif command == "add-email":
+        handlers.add_email(args)
+    elif command == "show-email":
+        handlers.show_email(args)
     elif command == "birthdays":
         handlers.birthdays()
     elif command == "note_add":
