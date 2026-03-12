@@ -39,7 +39,7 @@ add-email: [name] [email] - Add email for a specific contact
 show-email: [name] - Show email for contact
 add-address: [name] [address] - Add physical address for a specific contact,
 show-address: [name] - Show address for contact,
-birthdays: Show upcoming birthdays for a week
+birthdays: [days] - Show upcoming birthdays for a specified number of days (default 7)
 note_add: [text] - Add a new note
 note_change: [id] [text] - Change an existing note
 note_delete: [id] - Delete a note by id
