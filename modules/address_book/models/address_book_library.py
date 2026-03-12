@@ -18,6 +18,18 @@ class RecordException(Exception):
 class EmailException(Exception):
     pass
 
+class AddressException(Exception):
+    pass
+
+
+class Address(Field):
+    def __init__(self, value: str):
+        if not value or not value.strip():
+            raise ValueError("Address cannot be empty")
+        super().__init__(value.strip())
+
+    def __str__(self):
+        return f"address: {self.value}"
 
 class Email(Field):
     def __init__(self, value: str):
@@ -29,7 +41,7 @@ class Email(Field):
         return f"email: {self.value}"
 
 class Name(Field):
-    def __init__(self, value):
+    def __init__(self, value: str):
         self.value = value
 
 
@@ -65,19 +77,22 @@ class Record:
         self.phones = []
         self.birthday = None
         self.email = None
+        self.address = None
 
     def __str__(self):
         res = f"Contact name: {self.name.value}"
         
         birthday = getattr(self, 'birthday', None)
-        
         if birthday:
             res += f", {birthday}"
             
         email = getattr(self, 'email', None)
-        
         if email:
             res += f", {email}"
+
+        address = getattr(self, 'address', None) # Безпечно дістаємо адресу
+        if address:
+            res += f", {address}"
             
         res += f", phones: {'; '.join(p.value for p in self.phones)}"
         return res
@@ -109,6 +124,9 @@ class Record:
     
     def add_email(self, email: str):
         self.email = Email(email)
+
+    def add_address(self, address: str):
+        self.address = Address(address)
 
 
 class AddressBook(UserDict):

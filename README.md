@@ -9,10 +9,15 @@ homework4/
 │   ├── address_book/
 │   │   └── models/
 │   │       └── address_book_library.py
+|   |       └── common.py
+|   |       └── note.py
+|   ├── configs
+|   |   └── config.py
 │   └── console_bot/
 │       ├── command_parser.py
 │       ├── console_bot.py
 │       └── handlers.py
+|       └── note_handlers.py
 ```
 
 ### Task
@@ -25,11 +30,20 @@ python3 -m modules.console_bot.console_bot
 
 add: [name] [phone] - Add a new contact
 change: [name] [old_phone] [new_phone] - Change an existing contact
+delete: [name] - Delete a contact
 phone: [name] - Show a specific contact
 all: Show all contacts
 add-birthday: [name] [birthday] - Add for a specific contact
 show-birthday: [name] - Show birthday for contact
+add-email: [name] [email] - Add email for a specific contact
+show-email: [name] - Show email for contact
+add-address: [name] [address] - Add physical address for a specific contact,
+show-address: [name] - Show address for contact,
 birthdays: Show upcoming birthdays for a week
+note_add: [text] - Add a new note
+note_change: [id] [text] - Change an existing note
+note_delete: [id] - Delete a note by id
+note_all: Show all notes
 dump: Store address book in file
 load: Load address book from file
 help: Show available commands
