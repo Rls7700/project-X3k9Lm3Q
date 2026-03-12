@@ -16,7 +16,7 @@ AVAILABLE_COMMANDS = {
     "show-email": "[name] - Show email for contact",
     "add-address": "[name] [address] - Add physical address for a specific contact",
     "show-address": "[name] - Show address for contact",
-    "birthdays": "Show upcoming birthdays for a week",
+    "birthdays": "[days] - Show upcoming birthdays for a specified number of days (default 7)",
 
     "note_add": "[text] - Add a new note", 
     "note_change": "[id] [text] - Change an existing note",
@@ -82,7 +82,7 @@ def command_parser(input_command: str) -> None:
     elif command == "show-address":
         handlers.show_address(args)
     elif command == "birthdays":
-        handlers.birthdays()
+        handlers.birthdays(args)
     elif command == "note_add":
         note_handlers.note_add(args)
     elif command == "note_change":

@@ -1,7 +1,7 @@
 # Handler functions for working with notes
 import pickle
 import os
-from colorama import Fore
+from colorama import Fore # type: ignore
 from functools import wraps
 from ..address_book.models.note import Note
 from ..configs.config import NOTE_BOOK_FILE
