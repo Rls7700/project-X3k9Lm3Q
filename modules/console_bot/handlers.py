@@ -90,9 +90,9 @@ def change_contact(args):
     record = book.find(name)
     if not record:
         print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
-        return;
+        return
     if record.edit_phone(old_phone, new_phone):
-        print(f"Changed contact {Fore.GREEN}{name}{Fore.RESET} to phone: {Fore.GREEN}{phone}{Fore.RESET}") # type: ignore
+        print(f"Changed contact {Fore.GREEN}{name}{Fore.RESET} to phone: {Fore.GREEN}{new_phone}{Fore.RESET}")
 
 
 @input_error

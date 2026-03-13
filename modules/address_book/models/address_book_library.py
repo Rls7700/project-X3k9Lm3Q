@@ -105,7 +105,7 @@ class Record:
         for index, p in enumerate(self.phones):
             if p.value == old_phone:
                 self.phones[index] = Phone(new_phone)
-                return
+                return True
         raise PhoneException(f"Phone number {old_phone} not found")
 
     def find_phone(self, phone: str):
