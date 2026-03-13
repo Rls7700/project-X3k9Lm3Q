@@ -9,7 +9,7 @@ from ..address_book.models.address_book_library import AddressBook, Record
 ADDRESS_BOOK_FILE = "addressbook.pkl"
 ADDRESS_BOOK_AUTOLOAD = True
 ADDRESS_BOOK_AUTOSAVE = True
-book = None
+book: AddressBook = AddressBook()
 
 
 def init():
@@ -177,3 +177,40 @@ def show_email(args):
         print(f"Contact {Fore.GREEN}{record.name.value}{Fore.RESET} email: {Fore.GREEN}{record.email.value}{Fore.RESET}")
     else:
         print(f"Contact {Fore.YELLOW}{record.name.value}{Fore.RESET} doesn't have an email.")
+
+
+@input_error
+def add_address(args):
+    if len(args) < 2:
+        print(f"{Fore.RED}Usage: add-address [name] [address text]{Fore.RESET}")
+        return
+        
+    name = args[0]
+    address = " ".join(args[1:])
+    
+    record = book.find(name)
+    if not record:
+        print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
+        return
+    
+    try:
+        record.add_address(address)
+        print(f"Added address {Fore.GREEN}{address}{Fore.RESET} for contact {Fore.GREEN}{name}{Fore.RESET}")
+    except Exception as e:
+        print(f"{Fore.RED}Error: {e}{Fore.RESET}")
+
+
+@input_error
+def show_address(args):
+    name = " ".join(args)
+    record = book.find(name)
+
+    if not record:
+        print(f"Contact not found: {Fore.RED}{name}{Fore.RESET}")
+        return
+    
+    address = getattr(record, 'address', None)
+    if address:
+        print(f"Contact {Fore.GREEN}{record.name.value}{Fore.RESET} address: {Fore.GREEN}{address.value}{Fore.RESET}")
+    else:
+        print(f"Contact {Fore.YELLOW}{record.name.value}{Fore.RESET} doesn't have an address.")
