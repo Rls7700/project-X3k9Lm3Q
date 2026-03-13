@@ -143,11 +143,23 @@ def show_birthday(args):
     print(f"Contact {record.name} {record.birthday}")
 
 
-def birthdays():
-    list = book.get_upcoming_birthdays()
-    for r in list:
-        print(f"Contact {Fore.GREEN}{r['name']}{Fore.RESET} with birthday {r['birthday']} will selebrate {Fore.GREEN}{r['congratulation_date']}{Fore.RESET}")
+def birthdays(args):
+    days = 7
+    if args:
+        try:
+            days = int(args[0])
+        except ValueError:
+            print(f"{Fore.RED}Please enter a valid number of days (e.g., birthdays 14).{Fore.RESET}")
+            return
 
+    b_list = book.get_upcoming_birthdays(days)
+    
+    if not b_list:
+        print(f"No upcoming birthdays in the next {days} days.")
+        return
+        
+    for r in b_list:
+        print(f"Contact {Fore.GREEN}{r['name']}{Fore.RESET} with birthday {r['birthday']} will celebrate on {Fore.GREEN}{r['congratulation_date']}{Fore.RESET}")
 
 @input_error
 def add_email(args):

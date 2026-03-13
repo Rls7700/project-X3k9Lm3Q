@@ -143,35 +143,47 @@ class AddressBook(UserDict):
             return True
         return False
 
-    def get_upcoming_birthdays(self) -> list[dict]:
+    def get_upcoming_birthdays(self, days: int = 7) -> list[dict]:
         result = []
         current_year = datetime.now().year
         today = datetime.now().date()
+        
         for user in self.data.values():
+            
             if not user.birthday or not user.birthday.value:
                 continue
+            
             birthday = user.birthday.value
             upcoming_birthday = None
+            
             try:
                 upcoming_birthday = birthday.replace(year=current_year)
             except ValueError:
                 upcoming_birthday = birthday.replace(year=current_year, day=28)
+            
             upcoming_birthday_days = (upcoming_birthday - today).days
+            
             if upcoming_birthday_days < 0:
                 try:
                     upcoming_birthday = birthday.replace(year=current_year + 1)
                 except ValueError:
                     upcoming_birthday = birthday.replace(year=current_year + 1, day=28)
+        
                 upcoming_birthday_days = (upcoming_birthday - today).days
-            if 0 <= upcoming_birthday_days < DEFAULT_GREETING_PERIOD_DAYS:
+            
+            if 0 <= upcoming_birthday_days <= days:
+        
                 if upcoming_birthday.weekday() == 5: # Saturday
                     upcoming_birthday = upcoming_birthday + timedelta(days=2)
                 elif upcoming_birthday.weekday() == 6: # Sunday
                     upcoming_birthday = upcoming_birthday + timedelta(days=1)
+        
                 result.append({
                     "name": user.name.value,
                     "birthday": user.birthday.value.strftime(DEFAULT_DATE_FORMAT),
                     "congratulation_date": upcoming_birthday.strftime(DEFAULT_DATE_FORMAT)
                 })
+        
         result.sort(key=lambda x: x["congratulation_date"])
+
         return result
