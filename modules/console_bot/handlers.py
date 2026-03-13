@@ -226,3 +226,38 @@ def show_address(args):
         print(f"Contact {Fore.GREEN}{record.name.value}{Fore.RESET} address: {Fore.GREEN}{address.value}{Fore.RESET}")
     else:
         print(f"Contact {Fore.YELLOW}{record.name.value}{Fore.RESET} doesn't have an address.")
+
+@input_error
+def search_contacts(args):
+    if not args:
+        print(f"{Fore.RED}Usage: search [query]{Fore.RESET}")
+        return
+        
+    query = args[0].lower()
+    found_records = []
+    
+    for record in book.data.values():
+        if query in record.name.value.lower():
+            found_records.append(record)
+            continue
+            
+        if any(query in p.value for p in record.phones):
+            found_records.append(record)
+            continue
+            
+        email = getattr(record, 'email', None)
+        if email and query in email.value.lower():
+            found_records.append(record)
+            continue
+            
+        address = getattr(record, 'address', None)
+        if address and query in address.value.lower():
+            found_records.append(record)
+            continue
+
+    if not found_records:
+        print(f"No contacts found matching: {Fore.YELLOW}{query}{Fore.RESET}")
+    else:
+        print(f"Found {len(found_records)} contact(s):")
+        for rec in found_records:
+            print(rec)
