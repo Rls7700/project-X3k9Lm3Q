@@ -143,11 +143,23 @@ def show_birthday(args):
     print(f"Contact {record.name} {record.birthday}")
 
 
-def birthdays():
-    list = book.get_upcoming_birthdays()
-    for r in list:
-        print(f"Contact {Fore.GREEN}{r['name']}{Fore.RESET} with birthday {r['birthday']} will selebrate {Fore.GREEN}{r['congratulation_date']}{Fore.RESET}")
+def birthdays(args):
+    days = 7
+    if args:
+        try:
+            days = int(args[0])
+        except ValueError:
+            print(f"{Fore.RED}Please enter a valid number of days (e.g., birthdays 14).{Fore.RESET}")
+            return
 
+    b_list = book.get_upcoming_birthdays(days)
+    
+    if not b_list:
+        print(f"No upcoming birthdays in the next {days} days.")
+        return
+        
+    for r in b_list:
+        print(f"Contact {Fore.GREEN}{r['name']}{Fore.RESET} with birthday {r['birthday']} will celebrate on {Fore.GREEN}{r['congratulation_date']}{Fore.RESET}")
 
 @input_error
 def add_email(args):
@@ -214,3 +226,38 @@ def show_address(args):
         print(f"Contact {Fore.GREEN}{record.name.value}{Fore.RESET} address: {Fore.GREEN}{address.value}{Fore.RESET}")
     else:
         print(f"Contact {Fore.YELLOW}{record.name.value}{Fore.RESET} doesn't have an address.")
+
+@input_error
+def search_contacts(args):
+    if not args:
+        print(f"{Fore.RED}Usage: search [query]{Fore.RESET}")
+        return
+        
+    query = args[0].lower()
+    found_records = []
+    
+    for record in book.data.values():
+        if query in record.name.value.lower():
+            found_records.append(record)
+            continue
+            
+        if any(query in p.value for p in record.phones):
+            found_records.append(record)
+            continue
+            
+        email = getattr(record, 'email', None)
+        if email and query in email.value.lower():
+            found_records.append(record)
+            continue
+            
+        address = getattr(record, 'address', None)
+        if address and query in address.value.lower():
+            found_records.append(record)
+            continue
+
+    if not found_records:
+        print(f"No contacts found matching: {Fore.YELLOW}{query}{Fore.RESET}")
+    else:
+        print(f"Found {len(found_records)} contact(s):")
+        for rec in found_records:
+            print(rec)

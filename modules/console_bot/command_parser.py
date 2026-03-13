@@ -9,6 +9,7 @@ AVAILABLE_COMMANDS = {
     "change": "[name] [old_phone] [new_phone] - Change an existing contact",
     "delete": "[name] - Delete a contact",
     "phone": "[name] - Show a specific contact",
+    "search": "[query] - Search contacts by name, phone, email, or address",
     "all": "Show all contacts",
     "add-birthday": "[name] [birthday] - Add for a specific contact",
     "show-birthday": "[name] - Show birthday for contact",
@@ -16,12 +17,15 @@ AVAILABLE_COMMANDS = {
     "show-email": "[name] - Show email for contact",
     "add-address": "[name] [address] - Add physical address for a specific contact",
     "show-address": "[name] - Show address for contact",
-    "birthdays": "Show upcoming birthdays for a week",
+    "birthdays": "[days] - Show upcoming birthdays for a specified number of days (default 7)",
 
     "note_add": "[text] - Add a new note", 
     "note_change": "[id] [text] - Change an existing note",
     "note_delete": "[id] - Delete a note by id",
+    "note_add_tag": "[id] [tag] - Add a tag to a specific note",
     "note_all": "Show all notes",
+    "note_search": "[query] - Search notes by text content",
+    "note_sort_tags": "Show all notes sorted by tags",
 
     "dump": "Store address book in file",
     "load": "Load address book from file",
@@ -69,6 +73,8 @@ def command_parser(input_command: str) -> None:
         handlers.show_all_contacts()
     elif command == "phone":
         handlers.show_contact(args)
+    elif command == "search":
+        handlers.search_contacts(args)
     elif command == "add-birthday":
         handlers.add_birthday(args)
     elif command == "show-birthday":
@@ -82,7 +88,7 @@ def command_parser(input_command: str) -> None:
     elif command == "show-address":
         handlers.show_address(args)
     elif command == "birthdays":
-        handlers.birthdays()
+        handlers.birthdays(args)
     elif command == "note_add":
         note_handlers.note_add(args)
     elif command == "note_change":
@@ -91,6 +97,12 @@ def command_parser(input_command: str) -> None:
         note_handlers.note_delete(args)
     elif command == "note_all":
         note_handlers.note_all()
+    elif command == 'note_add_tag':
+        note_handlers.note_add_tag(args)
+    elif command == "note_search":
+        note_handlers.note_search(args)
+    elif command == "note_sort_tags":
+        note_handlers.note_sort_tags()
     elif command == "dump":
         handlers.dump()
         note_handlers.dump()
