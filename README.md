@@ -1,3 +1,21 @@
+## Installation
+
+You can install this bot as a Python package. It is recommended to use a virtual environment.
+
+1. Clone the repository and navigate to the project directory:
+
+2. Install the package:
+
+pip install .
+
+3. After installation, the bot becomes available as a terminal command. You can start it from anywhere by simply typing:
+
+assistant-bot
+
+4. Alternatively, you can still run it as a script:
+
+python3 -m modules.console_bot.console_bot
+
 # Classes
 
 ## Structure
