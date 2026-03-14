@@ -1,35 +1,29 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import re
+
 from .common import Field
+from .exceptions import (
+    PhoneException,
+    RecordException,
+    EmailException,
+    AddressException,
+    BirthdayException,
+)
 
 DEFAULT_GREETING_PERIOD_DAYS = 7
 DEFAULT_DATE_FORMAT = "%d.%m.%Y"
 
 
-class PhoneException(Exception):
-    pass
-
-
-class RecordException(Exception):
-    pass
-
-
-class EmailException(Exception):
-    pass
-
-class AddressException(Exception):
-    pass
-
-
 class Address(Field):
     def __init__(self, value: str):
         if not value or not value.strip():
-            raise ValueError("Address cannot be empty")
+            raise AddressException("Address cannot be empty")
         super().__init__(value.strip())
 
     def __str__(self):
         return f"address: {self.value}"
+
 
 class Email(Field):
     def __init__(self, value: str):
@@ -40,9 +34,12 @@ class Email(Field):
     def __str__(self):
         return f"email: {self.value}"
 
+
 class Name(Field):
     def __init__(self, value: str):
-        self.value = value
+        if not value or not value.strip():
+            raise RecordException("Name cannot be empty")
+        self.value = value.strip()
 
 
 class Phone(Field):
@@ -55,20 +52,22 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, value: str | None):
         self.value = None
+
         if value is None:
             return
+
         if not re.match(r"^\d{2}\.\d{2}\.\d{4}$", value):
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+            raise BirthdayException("Invalid date format. Use DD.MM.YYYY")
+
         try:
             self.value = datetime.strptime(value, DEFAULT_DATE_FORMAT).date()
-        except:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+        except ValueError:
+            raise BirthdayException("Invalid date format. Use DD.MM.YYYY")
 
     def __str__(self):
         if self.value:
             return f"birthday: {self.value.strftime(DEFAULT_DATE_FORMAT)}"
         return ""
-        
 
 
 class Record:
@@ -81,19 +80,19 @@ class Record:
 
     def __str__(self):
         res = f"Contact name: {self.name.value}"
-        
-        birthday = getattr(self, 'birthday', None)
+
+        birthday = getattr(self, "birthday", None)
         if birthday:
             res += f", {birthday}"
-            
-        email = getattr(self, 'email', None)
+
+        email = getattr(self, "email", None)
         if email:
             res += f", {email}"
 
-        address = getattr(self, 'address', None) # Безпечно дістаємо адресу
+        address = getattr(self, "address", None)
         if address:
             res += f", {address}"
-            
+
         res += f", phones: {'; '.join(p.value for p in self.phones)}"
         return res
 
@@ -105,7 +104,7 @@ class Record:
         for index, p in enumerate(self.phones):
             if p.value == old_phone:
                 self.phones[index] = Phone(new_phone)
-                return
+                return True
         raise PhoneException(f"Phone number {old_phone} not found")
 
     def find_phone(self, phone: str):
@@ -113,7 +112,7 @@ class Record:
             if p.value == phone:
                 return p.value
         return None
-    
+
     def add_birthday(self, birthday: str):
         self.birthday = Birthday(birthday)
 
@@ -121,7 +120,7 @@ class Record:
         if not self.birthday or not self.birthday.value:
             return None
         return self.birthday.value.strftime(DEFAULT_DATE_FORMAT)
-    
+
     def add_email(self, email: str):
         self.email = Email(email)
 
@@ -132,11 +131,11 @@ class Record:
 class AddressBook(UserDict):
     def add_record(self, record: Record):
         if not self.find(record.name.value):
-            self.data[record.name.value] = record        
-    
+            self.data[record.name.value] = record
+
     def find(self, search: str):
         return self.data.get(search)
-    
+
     def delete(self, name):
         if self.find(name):
             del self.data[name]
@@ -147,43 +146,41 @@ class AddressBook(UserDict):
         result = []
         current_year = datetime.now().year
         today = datetime.now().date()
-        
+
         for user in self.data.values():
-            
             if not user.birthday or not user.birthday.value:
                 continue
-            
+
             birthday = user.birthday.value
             upcoming_birthday = None
-            
+
             try:
                 upcoming_birthday = birthday.replace(year=current_year)
             except ValueError:
                 upcoming_birthday = birthday.replace(year=current_year, day=28)
-            
+
             upcoming_birthday_days = (upcoming_birthday - today).days
-            
+
             if upcoming_birthday_days < 0:
                 try:
                     upcoming_birthday = birthday.replace(year=current_year + 1)
                 except ValueError:
                     upcoming_birthday = birthday.replace(year=current_year + 1, day=28)
-        
                 upcoming_birthday_days = (upcoming_birthday - today).days
-            
-            if 0 <= upcoming_birthday_days <= days:
-        
-                if upcoming_birthday.weekday() == 5: # Saturday
-                    upcoming_birthday = upcoming_birthday + timedelta(days=2)
-                elif upcoming_birthday.weekday() == 6: # Sunday
-                    upcoming_birthday = upcoming_birthday + timedelta(days=1)
-        
-                result.append({
-                    "name": user.name.value,
-                    "birthday": user.birthday.value.strftime(DEFAULT_DATE_FORMAT),
-                    "congratulation_date": upcoming_birthday.strftime(DEFAULT_DATE_FORMAT)
-                })
-        
-        result.sort(key=lambda x: x["congratulation_date"])
 
+            if 0 <= upcoming_birthday_days <= days:
+                if upcoming_birthday.weekday() == 5:
+                    upcoming_birthday = upcoming_birthday + timedelta(days=2)
+                elif upcoming_birthday.weekday() == 6:
+                    upcoming_birthday = upcoming_birthday + timedelta(days=1)
+
+                result.append(
+                    {
+                        "name": user.name.value,
+                        "birthday": user.birthday.value.strftime(DEFAULT_DATE_FORMAT),
+                        "congratulation_date": upcoming_birthday.strftime(DEFAULT_DATE_FORMAT),
+                    }
+                )
+
+        result.sort(key=lambda x: x["congratulation_date"])
         return result
