@@ -21,7 +21,7 @@ python3 -m modules.console_bot.console_bot
 ## Structure
 
 ```
-homework4/
+FINAL_PROJECT/
 ├── main.py
 ├── modules/
 │   ├── address_book/
